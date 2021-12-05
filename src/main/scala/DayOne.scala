@@ -1,40 +1,12 @@
-import cats.*
 import cats.implicits.*
-import cats.syntax.*
 
 import scala.io.Source
 import scala.language.postfixOps
-import scala.util.{Failure, Success, Try, Using}
+import scala.util.{Try, Using}
 
 object DayOne:
 
-  val readingsFileName = "day-1-input.txt"
-
-  def readLines(fileName: String): Try[List[String]] =
-    Using( Source.fromFile(fileName) ) { bufferedSurce =>
-      bufferedSurce.getLines.toList
-    }
-
-  def parseReadings(lines: List[String]): Try[List[Int]] =
-    Try { lines map(_ toInt) }
-
-  def tryToGetReadings: Try[List[Int]] =
-    for
-      lines <- readLines(readingsFileName)
-      readings <- parseReadings(lines)
-    yield readings
-
-  def handleErrorGettingReadings(throwable: Throwable): Unit =
-    println(s"ERROR: could not get readings due to the following exception: ${throwable.getMessage}")
-
-  def handleNotEnoughReadings(numberOfReadings: Int): Unit =
-    println(s"ERROR - expected: 3 or more readings; actual: $numberOfReadings readings.")
-
-  def reportResult(functionNumber: Int, result: Int): Unit =
-    println(s"counting function number $functionNumber returned $result")
-
-  val countingFunctions: List[List[Int] => Int] =
-    List(
+  val countingFunctions: List[List[Int] => Int] = List(
 
       // zip, filter and size
       readings =>
@@ -79,6 +51,23 @@ object DayOne:
         (readings zip readings.tail).count(_ < _)
     )
 
+  @main def dayOnePart1: Unit =
+    go(minReadings = 2)
+
+  @main def dayOnePart2: Unit =
+    go(preProcess, minReadings = 3)
+
+  def go(preProcess: List[Int] => List[Int] = identity, minReadings: Int): Unit =
+    tryToGetReadings map { readings =>
+      if readings.size < minReadings
+      then handleNotEnoughReadings(readings.size)
+      else
+        for
+          (f,n) <- countingFunctions.zipWithIndex
+          result = f(preProcess(readings))
+        yield reportResult(n,result)
+    } recover { handleErrorGettingReadings(_) }
+
   def preProcess(readings: List[Int]): List[Int] =
     (readings zip readings.tail zip readings.tail.tail) map { case ((x,y),z) => x + y + z }
 
@@ -86,25 +75,27 @@ object DayOne:
   def preProcess2(readings: List[Int]): List[Int] =
     readings.sliding(3).map(_.sum).toList
 
-  @main def dayOneMainPart1: Unit =
-    tryToGetReadings map {
-      case Nil => handleNotEnoughReadings(0)
-      case List(_) => handleNotEnoughReadings(1)
-      case readings =>
-        for
-          (f,n) <- countingFunctions.zipWithIndex
-          result = f(readings)
-        yield reportResult(n,result)
-    } recover { handleErrorGettingReadings(_) }
+  val readingsFileName = "day-1-input.txt"
 
-  @main def dayOneMainPart2: Unit =
-    tryToGetReadings map {
-      case Nil => handleNotEnoughReadings(0)
-      case List(_) => handleNotEnoughReadings(1)
-      case List(_,_) => handleNotEnoughReadings(2)
-      case readings =>
-        for
-        (f,n) <- countingFunctions.zipWithIndex
-      result = f(preProcess(readings))
-      yield reportResult(n,result)
-    } recover { handleErrorGettingReadings(_) }
+  def readLines(fileName: String): Try[List[String]] =
+    Using( Source.fromFile(fileName) ) { bufferedSurce =>
+      bufferedSurce.getLines.toList
+    }
+
+  def parseReadings(lines: List[String]): Try[List[Int]] =
+    Try { lines map(_ toInt) }
+
+  def tryToGetReadings: Try[List[Int]] =
+    for
+      lines <- readLines(readingsFileName)
+      readings <- parseReadings(lines)
+    yield readings
+
+  def handleErrorGettingReadings(throwable: Throwable): Unit =
+    println(s"ERROR: could not get readings due to the following exception: ${throwable.getMessage}")
+
+  def handleNotEnoughReadings(numberOfReadings: Int): Unit =
+    println(s"ERROR - expected: 3 or more readings; actual: $numberOfReadings readings.")
+
+  def reportResult(functionNumber: Int, result: Int): Unit =
+    println(s"counting function number $functionNumber returned $result")
