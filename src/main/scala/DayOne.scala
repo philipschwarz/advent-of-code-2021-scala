@@ -28,7 +28,7 @@ object DayOne:
 
       // zip, map and combineAll* (starred methods are provided by cats)
       readings =>
-        readings.zip(readings.tail).map { (x,y) => if x < y then 1 else 0 }.combineAll,
+        (readings zip readings.tail).map { (x,y) => if x < y then 1 else 0 } combineAll,
 
       // zip, foldMap* and orEmpty*
       readings =>
