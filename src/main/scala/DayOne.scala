@@ -46,7 +46,7 @@ object DayOne:
           yield (all zipWith rest) { (x,y) => if x < y then 1 else 0 } reduce
         ) orEmpty,
 
-      // zip and count - Jakub Kozłowski
+      // zip and count - seen in Jakub Kozłowski's 'Zip and slide! (Advent of Code day 1)' https://www.youtube.com/watch?v=AhcDxzjrUUI
       readings =>
         (readings zip readings.tail).count(_ < _)
     )
@@ -71,7 +71,8 @@ object DayOne:
   def preProcess(readings: List[Int]): List[Int] =
     (readings zip readings.tail zip readings.tail.tail) map { case ((x,y),z) => x + y + z }
 
-  // Jakub Kozłowski
+  // sliding instead of zipping thrice
+  // seen in Jakub Kozłowski's 'Zip and slide! (Advent of Code day 1)' https://www.youtube.com/watch?v=AhcDxzjrUUI
   def preProcess2(readings: List[Int]): List[Int] =
     readings.sliding(3).map(_.sum).toList
 
