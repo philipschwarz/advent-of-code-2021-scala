@@ -1,4 +1,8 @@
 import cats.implicits.*
+import cats.Monoid
+import cats.Traverse
+import cats.data.Const
+import cats.instances._
 
 import scala.io.Source
 import scala.language.postfixOps
@@ -48,7 +52,20 @@ object DayOne:
 
       // zip and count - seen in Jakub Kozłowski's 'Zip and slide! (Advent of Code day 1)' https://www.youtube.com/watch?v=AhcDxzjrUUI
       readings =>
-        (readings zip readings.tail).count(_ < _)
+        (readings zip readings.tail).count(_ < _),
+
+      readings =>
+        (Traverse[List].traverse(readings){ n => Const[CountIncrement,Any](CountIncrement(0,n,n))}).getConst.count
+    )
+
+  case class CountIncrement(count: Int, left: Int, right: Int)
+
+  given countIncrementMonoid: Monoid[CountIncrement] =
+    Monoid.instance[CountIncrement](
+      CountIncrement(0,Int.MinValue,Int.MaxValue),
+      (left: CountIncrement, right: CountIncrement) =>
+        val inc = if (left.right < right.left) 1 else 0
+        CountIncrement(left.count + right.count + inc, left.left, right.right)
     )
 
   @main def dayOnePart1: Unit =
