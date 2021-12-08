@@ -20,7 +20,7 @@
       bufferedSurce.getLines.toList
     }
 
-  // Scala 3 string interpolation in extractors, as seen in Jakub Kozłowski's
+  // String interpolation in extractors, as seen in Jakub Kozłowski's
   // 'Coding at 6am isn't fun' https://www.youtube.com/watch?v=4nGSF_Ub7QQ
   def parseCommands(lines: List[String]): Try[List[Command]] =
     Try {
