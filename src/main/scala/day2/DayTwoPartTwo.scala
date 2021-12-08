@@ -1,7 +1,7 @@
-  package daytwopart2
+  package day2.part2
 
-  import daytwocommon.Command.*
-  import daytwocommon.{Command, handleErrorGettingCommands, tryToGetCommands}
+  import day2.Command.*
+  import day2.{Command, handleErrorGettingCommands, tryToGetCommands}
 
   @main def dayTwoPart2: Unit =
     tryToGetCommands map { commands =>

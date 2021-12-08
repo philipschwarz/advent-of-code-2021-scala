@@ -1,8 +1,10 @@
+package day1
+
 import cats.implicits.*
 import cats.Monoid
 import cats.Traverse
 import cats.data.Const
-import cats.instances._
+import cats.instances.{all, *}
 
 import scala.io.Source
 import scala.language.postfixOps
@@ -12,51 +14,51 @@ object DayOne:
 
   val countingFunctions: List[List[Int] => Int] = List(
 
-      // zip, filter and size
-      readings =>
-        readings.zip(readings.tail).filter(_ < _).size,
+    // zip, filter and size
+    readings =>
+      readings.zip(readings.tail).filter(_ < _).size,
 
-      // zip, map and sum
-      readings =>
-        readings.zip(readings.tail).map((x,y) => if (x < y) then 1 else 0).sum,
+    // zip, map and sum
+    readings =>
+      readings.zip(readings.tail).map((x,y) => if (x < y) then 1 else 0).sum,
 
-      // sliding, filter and size
-      readings =>
-        readings.sliding(2).filter{ case List(x,y) => x < y }.size,
+    // sliding, filter and size
+    readings =>
+      readings.sliding(2).filter{ case List(x,y) => x < y }.size,
 
-      // foldLeft
-      readings =>
-        readings.tail.foldLeft((readings.head,0)) {
-          case ((x,n),y) => if x < y then (y,n + 1) else (y,n)
-        }(1),
+    // foldLeft
+    readings =>
+      readings.tail.foldLeft((readings.head,0)) {
+        case ((x,n),y) => if x < y then (y,n + 1) else (y,n)
+      }(1),
 
-      // zip, map and combineAll* (starred methods are provided by cats)
-      readings =>
-        (readings zip readings.tail).map { (x,y) => if x < y then 1 else 0 } combineAll,
+    // zip, map and combineAll* (starred methods are provided by cats)
+    readings =>
+      (readings zip readings.tail).map { (x,y) => if x < y then 1 else 0 } combineAll,
 
-      // zip, foldMap* and orEmpty*
-      readings =>
-        (readings zip readings.tail) foldMap { (x,y) => Option.when(x < y)(1) } orEmpty,
+    // zip, foldMap* and orEmpty*
+    readings =>
+      (readings zip readings.tail) foldMap { (x,y) => Option.when(x < y)(1) } orEmpty,
 
-      // zip and foldMap*
-      readings =>
-        (readings zip readings.tail).foldMap { (x,y) => if x < y then 1 else 0 },
+    // zip and foldMap*
+    readings =>
+      (readings zip readings.tail).foldMap { (x,y) => if x < y then 1 else 0 },
 
-      // zipWith*, reduce* and orEmpty*
-      readings =>
-        ( for
-            all <- readings.toNel
-            rest <- all.tail.toNel
-          yield (all zipWith rest) { (x,y) => if x < y then 1 else 0 } reduce
+    // zipWith*, reduce* and orEmpty*
+    readings =>
+      ( for
+        all <- readings.toNel
+        rest <- all.tail.toNel
+      yield (all zipWith rest) { (x,y) => if x < y then 1 else 0 } reduce
         ) orEmpty,
 
-      // zip and count - seen in Jakub Kozłowski's 'Zip and slide! (Advent of Code day 1)' https://www.youtube.com/watch?v=AhcDxzjrUUI
-      readings =>
-        (readings zip readings.tail).count(_ < _),
+    // zip and count - seen in Jakub Kozłowski's 'Zip and slide! (Advent of Code day 1)' https://www.youtube.com/watch?v=AhcDxzjrUUI
+    readings =>
+      (readings zip readings.tail).count(_ < _),
 
-      readings =>
-        (Traverse[List].traverse(readings){ n => Const[CountIncrement,Any](CountIncrement(0,n,n))}).getConst.count
-    )
+    readings =>
+      (Traverse[List].traverse(readings){ n => Const[CountIncrement,Any](CountIncrement(0,n,n))}).getConst.count
+  )
 
   case class CountIncrement(count: Int, left: Int, right: Int)
 
@@ -65,7 +67,7 @@ object DayOne:
       CountIncrement(0,Int.MinValue,Int.MaxValue),
       (left: CountIncrement, right: CountIncrement) =>
         val inc = if (left.right < right.left) 1 else 0
-        CountIncrement(left.count + right.count + inc, left.left, right.right)
+          CountIncrement(left.count + right.count + inc, left.left, right.right)
     )
 
   @main def dayOnePart1: Unit =
@@ -80,9 +82,9 @@ object DayOne:
       then handleNotEnoughReadings(readings.size)
       else
         for
-          (f,n) <- countingFunctions.zipWithIndex
-          result = f(preProcess(readings))
-        yield reportResult(n,result)
+        (f,n) <- countingFunctions.zipWithIndex
+      result = f(preProcess(readings))
+      yield reportResult(n,result)
     } recover { handleErrorGettingReadings(_) }
 
   def preProcess(readings: List[Int]): List[Int] =

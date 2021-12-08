@@ -1,5 +1,5 @@
 
-  package daytwocommon
+  package day2
 
   import scala.io.Source
   import scala.util.{Try, Using}
@@ -9,7 +9,7 @@
     case Up(amount: Int)
     case Down(amount: Int)
 
-  import Command._
+  import day2.Command.*
 
   def tryToGetCommands: Try[List[Command]] =
     for
