@@ -9,8 +9,6 @@
     case Up(amount: Int)
     case Down(amount: Int)
 
-  import day2.Command.*
-
   def tryToGetCommands: Try[List[Command]] =
     for
       lines <- readLines(readingsFileName)
@@ -27,9 +25,9 @@
   def parseCommands(lines: List[String]): Try[List[Command]] =
     Try {
       lines map {
-        case s"forward $amount" => Forward(amount.toInt)
-        case s"up $amount" => Up(amount.toInt)
-        case s"down $amount" => Down(amount.toInt)
+        case s"forward $amount" => Command.Forward(amount.toInt)
+        case s"up $amount" => Command.Up(amount.toInt)
+        case s"down $amount" => Command.Down(amount.toInt)
         case other => throw new IllegalArgumentException(s"expected: forward|up|down <amount>; actual: $other.")
       }
     }

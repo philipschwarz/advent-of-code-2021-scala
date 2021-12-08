@@ -1,6 +1,5 @@
   package day2.part1
 
-  import day2.Command.*
   import day2.{Command, handleErrorGettingCommands, tryToGetCommands}
 
   @main def dayTwoPart1: Unit =
@@ -12,9 +11,9 @@
   val updatePosition: (Position, Command) => Position = {
     case (Position(horizontalPosition, depth), command) =>
       command match {
-        case Forward(amount) => Position(horizontalPosition + amount, depth)
-        case Up(amount) => Position(horizontalPosition, depth - amount)
-        case Down(amount) => Position(horizontalPosition, depth + amount)
+        case Command.Forward(amount) => Position(horizontalPosition + amount, depth)
+        case Command.Up(amount) => Position(horizontalPosition, depth - amount)
+        case Command.Down(amount) => Position(horizontalPosition, depth + amount)
       }
   }
 
