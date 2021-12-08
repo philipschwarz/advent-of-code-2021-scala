@@ -22,19 +22,15 @@
       bufferedSurce.getLines.toList
     }
 
+  // Scala 3 string interpolation in extractors, as seen in Jakub Kozłowski's
+  // 'Coding at 6am isn't fun' https://www.youtube.com/watch?v=AhcDxzjrUUI
   def parseCommands(lines: List[String]): Try[List[Command]] =
     Try {
-      lines map { line =>
-        line.split("\\s+") match {
-          case Array(command, amount) =>
-            command match {
-              case "forward" => Forward(amount.toInt)
-              case "up" => Up(amount.toInt)
-              case "down" => Down(amount.toInt)
-              case other => throw new IllegalArgumentException(s"expected: 'forward', 'up' or 'down'; actual: $command.")
-            }
-          case other => throw new IllegalArgumentException(s"expected: <command> <amount>; actual: $line.")
-        }
+      lines map {
+        case s"forward $amount" => Forward(amount.toInt)
+        case s"up $amount" => Up(amount.toInt)
+        case s"down $amount" => Down(amount.toInt)
+        case other => throw new IllegalArgumentException(s"expected: forward|up|down <amount>; actual: $other.")
       }
     }
 
