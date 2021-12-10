@@ -65,7 +65,7 @@ import scala.util.{Try, Using}
       else
         for
         (f,n) <- countingFunctions.zipWithIndex
-      result = f(preProcess(readings))
+        result = f(preProcess(readings))
       yield reportResult(n,result)
     } recover { handleErrorGettingReadings(_) }
 
