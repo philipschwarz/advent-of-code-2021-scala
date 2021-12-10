@@ -1,51 +1,50 @@
 package day3
 
-  val diagnosticReport = List(
-    "00100",
-    "11110",
-    "10110",
-    "10111",
-    "10101",
-    "01111",
-    "00111",
-    "11100",
-    "10000",
-    "11001",
-    "00010",
-    "01010",
-  )
+import cats.implicits.*
+import day3.BitCounts
+import day3.BitCounts.*
 
-  type BitCounts = List[(Int,Int)]
+import scala.io.Source
+import scala.language.postfixOps
+import scala.util.{Try, Using}
 
-  extension (s: String)
-    def toBitCounts: BitCounts = s.map {
-      case '0' => (1,0)
-      case '1' => (0,1)
-      case other => (0,0)
-    }.toList
+  @main def main: Unit = {
+    for
+      diagnostics <- tryGettingDiagnosticsFrom(diagnosticsFileName)
+      aggregatedDiagnostics <- tryAggregating(diagnostics)
+      gammaRate <- aggregatedDiagnostics.gammaRate
+      epsilonRate <- aggregatedDiagnostics.epsilonRate
+      powerConsumption = gammaRate * epsilonRate
+    yield reportResult(powerConsumption)
+  } recover( handleFailure(_) )
 
-  extension (xs: BitCounts)
+  def tryGettingDiagnosticsFrom(diagnosticsFileName: String): Try[List[BitCounts]] =
+    for
+      lines <- tryReadingLinesFrom(diagnosticsFileName)
+      diagnostics <- tryParsingDiagnosticsIn(lines)
+    yield diagnostics
 
-    def combine(ys: BitCounts): BitCounts =
-      (xs zip ys) map { case ((x1, y1), (x2, y2)) => ((x1 + x2), (y1 + y2)) }
+  def tryAggregating(diagnostics: List[BitCounts]): Try[BitCounts] =
+    Try {
+      diagnostics.size match {
+        case 0 => throw new IllegalArgumentException("expected: 1 or more diagnostic numbers; actual: none.")
+        case 1 => diagnostics.head
+        case other => diagnostics reduce { _ combine _ }
+      }
+    }
 
-    def gammaRate: Int =
-      val bits = xs.map { (zeroes,ones) =>
-        if zeroes >= ones then '0' else '1'
-      }.mkString
-      Integer.parseInt(bits,2)
+  def tryReadingLinesFrom(fileName: String): Try[List[String]] =
+    Using( Source.fromFile(fileName) ) { bufferedSurce =>
+      bufferedSurce.getLines.toList
+    }
 
-    def epsilonRate: Int =
-      val bits = xs.map { (zeroes,ones) =>
-        if zeroes < ones then '0' else '1'
-      }.mkString
-      Integer.parseInt(bits,2)
+  def tryParsingDiagnosticsIn(lines: List[String]): Try[List[BitCounts]] =
+    lines traverse( BitCounts(_) )
 
-@main def main =
+  val diagnosticsFileName = "day-3-input.txt"
 
-  val finalBitCounts = diagnosticReport.tail.foldLeft(diagnosticReport.head.toBitCounts){
-    (bitCounts, number) =>
-      bitCounts combine number.toBitCounts
-  }
+  def handleFailure(throwable: Throwable): Unit =
+    println(s"ERROR: Could not get diagnostics due to the following exception: ${throwable.getMessage}")
 
-  println(finalBitCounts.gammaRate * finalBitCounts.epsilonRate)
+  def reportResult(powerConsumption: Int): Unit =
+    println(s"The power consumption of the submarine is $powerConsumption.")
