@@ -15,14 +15,14 @@ package day3
     "01010",
   )
 
-  type BitCounts = Vector[(Int,Int)]
+  type BitCounts = List[(Int,Int)]
 
   extension (s: String)
     def toBitCounts: BitCounts = s.map {
       case '0' => (1,0)
       case '1' => (0,1)
       case other => (0,0)
-    }.toVector
+    }.toList
 
   extension (xs: BitCounts)
 
