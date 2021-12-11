@@ -1,7 +1,7 @@
 package day3.part1
 
-import day3.common._
-import day3.common.BitCounts._
+import day3.common.*
+import day3.common.BitCounts.*
 
 import scala.language.postfixOps
 

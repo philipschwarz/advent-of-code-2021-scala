@@ -1,7 +1,7 @@
 package day3.part2
 
 import day3.common.*
-import day3.common.BitCounts._
+import day3.common.BitCounts.*
 
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
@@ -17,22 +17,18 @@ import scala.util.{Failure, Success, Try}
 
   def computeOxygenGeneratorRating(diagnostics: List[BitCounts], bitNumber: Int = 0): Try[Int] =
     if diagnostics.size == 1 then diagnostics.head.toInt
-    else aggregate(diagnostics).flatMap{ aggregatedDiagnostics =>
-      val filteredDiagnostics =
-        if aggregatedDiagnostics.isMostlySet(bitNumber) || aggregatedDiagnostics.isEquallySetAndClear(bitNumber)
-        then diagnostics.filter(_.isSet(bitNumber))
-        else diagnostics.filter(_.isClear(bitNumber))
-      computeOxygenGeneratorRating(filteredDiagnostics, bitNumber + 1)
+    else aggregate(diagnostics) flatMap{ ds =>
+      val shouldBeKept: BitCounts => Boolean =
+        if ds.isMostlySet(bitNumber) || ds.isEquallySetAndClear(bitNumber) then _.isSet(bitNumber) else _.isClear(bitNumber)
+      computeOxygenGeneratorRating(diagnostics.filter(shouldBeKept), bitNumber + 1)
     }
 
   def computeCarbonDioxideScrubberRating(diagnostics: List[BitCounts], bitNumber: Int = 0): Try[Int] =
     if diagnostics.size == 1 then diagnostics.head.toInt
-    else aggregate(diagnostics).flatMap { aggregatedDiagnostics =>
-      val filteredDiagnostics =
-        if aggregatedDiagnostics.isMostlySet(bitNumber) || aggregatedDiagnostics.isEquallySetAndClear(bitNumber)
-        then diagnostics.filter(_.isClear(bitNumber))
-        else diagnostics.filter(_.isSet(bitNumber))
-      computeCarbonDioxideScrubberRating(filteredDiagnostics, bitNumber + 1)
+    else aggregate(diagnostics) flatMap { ds =>
+      val shouldBeKept: BitCounts => Boolean =
+        if ds.isMostlySet(bitNumber) || ds.isEquallySetAndClear(bitNumber) then _.isClear(bitNumber) else _.isSet(bitNumber)
+      computeCarbonDioxideScrubberRating(diagnostics.filter(shouldBeKept), bitNumber + 1)
     }
 
   def reportResult(lifeSupportRating: Int): Unit =

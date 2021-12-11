@@ -29,20 +29,20 @@
         val bits = xs.map { (zeroes,ones) =>
           if zeroes >= ones then '0' else '1'
         }.mkString
-        tryParsingInt(bits)
+        parseInt(bits)
 
       def epsilonRate: Try[Int] =
         val bits = xs.map { (zeroes,ones) =>
           if zeroes < ones then '0' else '1'
         }.mkString
-        tryParsingInt(bits)
+        parseInt(bits)
 
       def toInt: Try[Int] =
         val bits = xs.map {
           case (1, 0) => '0'
           case (0, 1) => '1'
         }.mkString
-        tryParsingInt(bits)
+        parseInt(bits)
 
       def isSet(bitNumber: Int): Boolean =
         xs(bitNumber) == (0,1)
@@ -59,7 +59,7 @@
       def isEquallySetAndClear(bitNumber: Int): Boolean =
         xs(bitNumber) match { case (zeroes, ones) => zeroes == ones }
 
-    private def tryParsingInt(bits: String): Try[Int] =
+    private def parseInt(bits: String): Try[Int] =
       Try {
         Integer.parseInt(bits, 2)
       } recoverWith { throwable =>
