@@ -40,7 +40,7 @@
     private def tryParsingInt(bits: String): Try[Int] =
       Try {
         Integer.parseInt(bits, 2)
-      }.recoverWith { throwable =>
+      } recoverWith { throwable =>
         throw new IllegalArgumentException(
           s"Could not parse '$bits' into an Int. Reason: $throwable.")
       }
