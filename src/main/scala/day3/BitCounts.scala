@@ -1,9 +1,9 @@
-  package day3
+  package day3.common
 
   import scala.language.postfixOps
   import scala.util.Try
 
-  opaque type BitCounts = List[(Int,Int)]
+  type BitCounts = List[(Int,Int)]
 
   object BitCounts:
 
@@ -36,6 +36,28 @@
           if zeroes < ones then '0' else '1'
         }.mkString
         tryParsingInt(bits)
+
+      def toInt: Try[Int] =
+        val bits = xs.map {
+          case (1, 0) => '0'
+          case (0, 1) => '1'
+        }.mkString
+        tryParsingInt(bits)
+
+      def isSet(bitNumber: Int): Boolean =
+        xs(bitNumber) == (0,1)
+
+      def isClear(bitNumber: Int): Boolean =
+        xs(bitNumber) == (1,0)
+
+      def isMostlySet(bitNumber: Int): Boolean =
+        xs(bitNumber) match { case (zeroes, ones) => zeroes < ones }
+
+      def isMostlyClear(bitNumber: Int): Boolean =
+        xs(bitNumber) match { case (zeroes, ones) => zeroes > ones }
+
+      def isEquallySetAndClear(bitNumber: Int): Boolean =
+        xs(bitNumber) match { case (zeroes, ones) => zeroes == ones }
 
     private def tryParsingInt(bits: String): Try[Int] =
       Try {

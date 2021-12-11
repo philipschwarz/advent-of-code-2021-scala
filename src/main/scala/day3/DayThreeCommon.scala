@@ -1,22 +1,10 @@
-package day3
+  package day3.common
 
-import cats.implicits.*
-import day3.BitCounts
-import day3.BitCounts.*
+  import cats.implicits.*
+  import BitCounts.combine
 
-import scala.io.Source
-import scala.language.postfixOps
-import scala.util.{Try, Using}
-
-  @main def main: Unit = {
-    for
-      diagnostics <- getDiagnostics(diagnosticsFileName)
-      aggregatedDiagnostics <- aggregate(diagnostics)
-      gammaRate <- aggregatedDiagnostics.gammaRate
-      epsilonRate <- aggregatedDiagnostics.epsilonRate
-      powerConsumption = gammaRate * epsilonRate
-    yield reportResult(powerConsumption)
-  } recover( handleFailure(_) )
+  import scala.io.Source
+  import scala.util.{Try, Using}
 
   def getDiagnostics(diagnosticsFileName: String): Try[List[BitCounts]] =
     for
@@ -45,6 +33,3 @@ import scala.util.{Try, Using}
 
   def handleFailure(throwable: Throwable): Unit =
     println(s"ERROR: Could not get diagnostics due to the following exception: ${throwable.getMessage}")
-
-  def reportResult(powerConsumption: Int): Unit =
-    println(s"The power consumption of the submarine is $powerConsumption.")
