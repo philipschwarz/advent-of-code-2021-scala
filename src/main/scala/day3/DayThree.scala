@@ -10,21 +10,21 @@ import scala.util.{Try, Using}
 
   @main def main: Unit = {
     for
-      diagnostics <- tryGettingDiagnosticsFrom(diagnosticsFileName)
-      aggregatedDiagnostics <- tryAggregating(diagnostics)
+      diagnostics <- getDiagnostics(diagnosticsFileName)
+      aggregatedDiagnostics <- aggregate(diagnostics)
       gammaRate <- aggregatedDiagnostics.gammaRate
       epsilonRate <- aggregatedDiagnostics.epsilonRate
       powerConsumption = gammaRate * epsilonRate
     yield reportResult(powerConsumption)
   } recover( handleFailure(_) )
 
-  def tryGettingDiagnosticsFrom(diagnosticsFileName: String): Try[List[BitCounts]] =
+  def getDiagnostics(diagnosticsFileName: String): Try[List[BitCounts]] =
     for
-      lines <- tryReadingLinesFrom(diagnosticsFileName)
-      diagnostics <- tryParsingDiagnosticsIn(lines)
+      lines <- readLines(diagnosticsFileName)
+      diagnostics <- parseDiagnostics(lines)
     yield diagnostics
 
-  def tryAggregating(diagnostics: List[BitCounts]): Try[BitCounts] =
+  def aggregate(diagnostics: List[BitCounts]): Try[BitCounts] =
     Try {
       diagnostics.size match {
         case 0 => throw new IllegalArgumentException("expected: 1 or more diagnostic numbers; actual: none.")
@@ -33,12 +33,12 @@ import scala.util.{Try, Using}
       }
     }
 
-  def tryReadingLinesFrom(fileName: String): Try[List[String]] =
+  def readLines(fileName: String): Try[List[String]] =
     Using( Source.fromFile(fileName) ) { bufferedSurce =>
       bufferedSurce.getLines.toList
     }
 
-  def tryParsingDiagnosticsIn(lines: List[String]): Try[List[BitCounts]] =
+  def parseDiagnostics(lines: List[String]): Try[List[BitCounts]] =
     lines traverse( BitCounts(_) )
 
   val diagnosticsFileName = "day-3-input.txt"
