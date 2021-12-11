@@ -3,7 +3,7 @@
   import scala.language.postfixOps
   import scala.util.Try
 
-  type BitCounts = List[(Int,Int)]
+  opaque type BitCounts = Vector[(Int,Int)]
 
   object BitCounts:
 
@@ -14,7 +14,7 @@
           case '1' => (0, 1)
           case other => throw IllegalArgumentException(
             s"Expected: a sequence of zeroes and ones, e.g. 011010; Actual: $bits")
-        } toList
+        } toVector
       }
     }
 
