@@ -19,7 +19,7 @@ import scala.util.{Failure, Success, Try}
     if diagnostics.size == 1 then diagnostics.head.toInt
     else aggregate(diagnostics) flatMap{ ds =>
       val shouldBeKept: BitCounts => Boolean =
-        if ds.isMostlySet(bitNumber) || ds.isEquallySetAndClear(bitNumber) then _.isSet(bitNumber) else _.isClear(bitNumber)
+        if ds.isMostlyOne(bitNumber) || ds.isEquallyZeroAndOne(bitNumber) then _.isOne(bitNumber) else _.isZero(bitNumber)
       computeOxygenGeneratorRating(diagnostics.filter(shouldBeKept), bitNumber + 1)
     }
 
@@ -27,7 +27,7 @@ import scala.util.{Failure, Success, Try}
     if diagnostics.size == 1 then diagnostics.head.toInt
     else aggregate(diagnostics) flatMap { ds =>
       val shouldBeKept: BitCounts => Boolean =
-        if ds.isMostlySet(bitNumber) || ds.isEquallySetAndClear(bitNumber) then _.isClear(bitNumber) else _.isSet(bitNumber)
+        if ds.isMostlyOne(bitNumber) || ds.isEquallyZeroAndOne(bitNumber) then _.isZero(bitNumber) else _.isOne(bitNumber)
       computeCarbonDioxideScrubberRating(diagnostics.filter(shouldBeKept), bitNumber + 1)
     }
 
