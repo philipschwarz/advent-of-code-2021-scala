@@ -69,6 +69,13 @@
       def isZero(bitNumber: Int): Boolean =
         xs(bitNumber) == (1,0)
 
+      def toInt: Try[Int] =
+        val bits = xs.map {
+          case (1, 0) => '0'
+          case (0, 1) => '1'
+        }.mkString
+        parseInt(bits)
+
       /** The following method makes sense for all BitCount
         * instances: it is used to aggregate instances */
 
@@ -91,13 +98,6 @@
       def epsilonRate: Try[Int] =
         val bits = xs.map { (zeroes,ones) =>
           if zeroes < ones then '0' else '1'
-        }.mkString
-        parseInt(bits)
-
-      def toInt: Try[Int] =
-        val bits = xs.map {
-          case (1, 0) => '0'
-          case (0, 1) => '1'
         }.mkString
         parseInt(bits)
 
