@@ -26,9 +26,24 @@
    *
    * BitCounts("0110")
    *   \
-   *    combine ----------> Vector((0,1),(0,1),(0,2),(1,0)
+   *    combine ----------> Vector((1,1),(1,1),(0,2),(2,0)
    *   /                              |     |     |   |
    * BitCounts("1010")              0 1   0 1   0 1   0 1
+   *
+   * scala> BitCounts("0110")
+   * val res0: util.Try[day3.common.BitCounts] = Success(Vector((1,0), (0,1), (0,1), (1,0)))
+   *
+   * scala> BitCounts("1010")
+   * val res1: util.Try[day3.common.BitCounts] = Success(Vector((0,1), (1,0), (0,1), (1,0)))
+   *
+   * scala> BitCounts("abcd")
+   * val res2: util.Try[day3.common.BitCounts] = Failure(java.lang.IllegalArgumentException: Expected: a sequence of zeroes and ones, e.g. 011010; Actual: abcd)
+   *
+   * scala> for
+   *          bc1 <- BitCounts("0110")
+   *          bc2 <- BitCounts("1010")
+   *        yield bc1 combine bc2
+    val res3: scala.util.Try[day3.common.BitCounts] = Success(Vector((1,1), (1,1), (0,2), (2,0)))
    */
   object BitCounts:
 
